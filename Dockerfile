@@ -3,8 +3,8 @@ LABEL authors="Gabriel Cesar Hutagalung"
 
 RUN pip install Flask
 RUN apt update
-RUN apt upgrade
-RUN apt install ffmpeg
+RUN apt upgrade -y
+RUN apt install -y ffmpeg
 
 COPY . .
 
