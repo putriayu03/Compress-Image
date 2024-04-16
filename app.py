@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, request, jsonify, send_file
+from flask import Flask, render_template, request, send_file, after_this_request
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -15,10 +15,21 @@ def hello_world():  # put application's code here
 def convert_to_audio():
     if request.method == 'POST':
         f = request.files['video']
-        filename = f.filename
+        filename = secure_filename(f.filename)
 
-        f.save(f"videos/{secure_filename(filename)}")
-        os.system(f"ffmpeg -i videos/{secure_filename(filename)} {os.path.splitext(filename)[0]}.mp3")
+        f.save(f"videos/{filename}")
+        print(filename)
+        os.system(f"ffmpeg -i videos/{filename} {os.path.splitext(filename)[0]}.mp3")
+
+        os.remove(f"videos/{filename}")
+
+        @after_this_request
+        def remove_video (response) :
+            try :
+                os.remove(f"{os.path.splitext(filename)[0]}.mp3")
+            except Exception as e :
+                print("Gagal menghapus video!")
+            return response
 
         return send_file(f"{os.path.splitext(filename)[0]}.mp3", as_attachment=True)
 
