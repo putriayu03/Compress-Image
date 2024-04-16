@@ -16,16 +16,14 @@ def convert_to_audio():
     if request.method == 'POST':
         f = request.files['video']
         filename = secure_filename(f.filename)
+        f.save(f"{filename}")
+        os.system(f"ffmpeg -i {filename} {os.path.splitext(filename)[0]}.mp3")
 
-        f.save(f"videos/{filename}")
-        print(filename)
-        os.system(f"ffmpeg -i videos/{filename} {os.path.splitext(filename)[0]}.mp3")
-
-        os.remove(f"videos/{filename}")
+        os.remove(f"{filename}")
 
         @after_this_request
         def remove_video (response) :
-            try :
+            try:
                 os.remove(f"{os.path.splitext(filename)[0]}.mp3")
             except Exception as e :
                 print("Gagal menghapus video!")
