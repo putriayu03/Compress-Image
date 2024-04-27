@@ -2,9 +2,7 @@ FROM python:latest
 LABEL authors="Gabriel Cesar Hutagalung"
 
 RUN pip install Flask
-RUN apt update
-RUN apt upgrade -y
-RUN apt install -y ffmpeg
+RUN pip install Pillow
 
 COPY . .
 
